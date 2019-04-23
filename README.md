@@ -1,5 +1,6 @@
-# Back testing using machine learning
-This package implements several machine learning algorithms for stock prediction
+# Paper trading tests of machine learning algorithms
+
+This package implements several machine learning algorithms for stock prediction to evaluate performance out of sample.
 
 The following libraries are used: Zipline: http://www.zipline.io/, Sklearn library: https://scikit-learn.org/, and TA library (technical analysis): https://www.ta-lib.org/
 
