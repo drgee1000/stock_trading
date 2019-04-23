@@ -1,9 +1,7 @@
-# Backtest_MachineLearning
-tool in adavanced financial analysis for the stocks prediction
+# Back testing using machine learning
+This package implements several machine learning algorithms for stock prediction
 
-the project is base on Zipline backtest platform, see the Zipline: http://www.zipline.io/
-, Sklearn library: https://scikit-learn.org/
-, and TA library: https://www.ta-lib.org/
+The following libraries are used: Zipline: http://www.zipline.io/, Sklearn library: https://scikit-learn.org/, and TA library (technical analysis): https://www.ta-lib.org/
 
 
 ### Step 1: Install External Library  ###
