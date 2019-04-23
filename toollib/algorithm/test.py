@@ -1,7 +1,8 @@
 """
 This is a template algorithm on Quantopian for you to adapt and fill in.
 """
-from zipline.api import (history,order, record, symbol,order_target_percent,set_benchmark,set_long_only,schedule_function,sid,date_rules,time_rules)
+from zipline.api import (order, record, symbol, order_target_percent, set_benchmark, set_long_only, schedule_function,
+                         date_rules, time_rules)
 from zipline import run_algorithm
 import os.path
 import math
@@ -9,7 +10,6 @@ import numpy as np
 # Pandas library: https://pandas.pydata.org/
 import pandas as pd
 from sklearn import preprocessing
-from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.svm import SVC
 from sklearn.linear_model import LogisticRegression
@@ -19,11 +19,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 from sklearn.feature_selection import SelectKBest
 from sklearn.feature_selection import chi2
-from toollib.TA.TA_indicator import TA
-import urllib
-from io import StringIO
-import csv
-import datetime as dt
+from toollib.Data.TA.TA_indicator import TA
 
 MODEL_NAME = ''
 SYMBOL = ''
@@ -149,7 +145,7 @@ def getTrainingWindow(high, low, prices, volume,dates):
     # Query historical pricing data
     date = 1
     ta_ = TA(dates)
-    ta_.addFeature(['PM', 'EMA', 'OBV', 'MA', 'MACD', 'STOCH', 'CCI', 'AD'], dates, prices, volume, high, low)
+    ta_.addFeature(['PM', 'EMA', 'OBV', 'MA', 'MACD', 'STOCH', 'CCI', 'AD'], dates, [prices, volume, high, low])
     input_data_set = ta_.getInputMatrix()
     tar = getTarget(prices, 0.015, 4)
     for data in input_data_set:
@@ -245,19 +241,22 @@ end = pd.to_datetime('2018-12-01').tz_localize('US/Eastern')
 
 #test_string = ['HPQ']
 model_list = ['SVM','KNeighbors','DecisionTree','RandomForest','LogisticRegression']
-for ele in test_string:
-    SYMBOL = ele
-    if(os.path.isfile(('output/'+SYMBOL+'_SVM_output.csv'))):
-        print('output/'+SYMBOL+'_SVM_output.csv is exist')
-        continue
-    else:
-        print('output/' + SYMBOL + '_SVM_output.csv is not exist')
-    for model_name in model_list:
-        MODEL_NAME = model_name
-        perf_manual = run_algorithm(start = start, end = end, capital_base = 10000000.0,  initialize=initialize, handle_data=rebalance, bundle = 'custom-na-csvdir-bundle')
+try:
+    for ele in test_string:
+        SYMBOL = ele
+        if(os.path.isfile(('output/'+SYMBOL+'_SVM_output.csv'))):
+            print('output/'+SYMBOL+'_SVM_output.csv is exist')
+            continue
+        else:
+            print('output/' + SYMBOL + '_SVM_output.csv is not exist')
+        for model_name in model_list:
+            MODEL_NAME = model_name
+            perf_manual = run_algorithm(start = start, end = end, capital_base = 10000000.0,  initialize=initialize, handle_data=rebalance, bundle = 'custom-na-csvdir-bundle')
 
-        # Print
-        perf_manual.to_csv('output/'+SYMBOL+'_'+MODEL_NAME+'_output.csv')
+            # Print
+            perf_manual.to_csv('output/'+SYMBOL+'_'+MODEL_NAME+'_output.csv')
+except Exception as error:
+    pass
 
 
 
