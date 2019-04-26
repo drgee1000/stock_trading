@@ -54,7 +54,7 @@ def format_file(symbol):
                     continue
                 DATE = datetime.strptime(row[0], DT_FORMAT)
                 #print(DATE)
-                if(DATE >= START_DATE) and (DATE <= END_DATE):
+                if(DATE >= START_DATE):
                     body.append(row)
 
         with open(root_path+symbol+'.csv', "w") as out:

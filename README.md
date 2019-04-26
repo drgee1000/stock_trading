@@ -1,6 +1,5 @@
-# Paper trading tests of machine learning algorithms
-
-This package implements several machine learning algorithms for stock prediction to evaluate performance out of sample.
+# Backtest_MachineLearning
+tool in adavanced financial analysis for the stocks prediction
 
 the project is base on Zipline backtest platform, see the Zipline: http://www.zipline.io/
 , Sklearn library: https://scikit-learn.org/
