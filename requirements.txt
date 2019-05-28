@@ -5,3 +5,5 @@ sklearn
 progressbar
 pandas==0.22
 numpy==1.16.2
+neat-python
+

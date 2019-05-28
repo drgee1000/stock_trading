@@ -48,7 +48,7 @@ class PostInstallCommand(install):
     def run(self):
         # PUT YOUR POST-INSTALL SCRIPT HERE or CALL A FUNCTION
         if(query_yes_no("Do you try creating a new stocks data bundle?")):
-            downloader.download()
+            #downloader.download()
             config.create_config()
         if(query_yes_no("Do you try creating a new currency data bundle?")):
             downloader1.download()
@@ -63,7 +63,7 @@ setup(
     author='Xianfan Gu',
     author_email='xianfang@asu.edu',
     # Needed to actually package something
-    packages=['toollib','toollib.pair_trading','toollib.Data','toollib.algorithm','toollib.algorithm.MachineLearning','toollib.Download','toollib.Data.TA',],
+    packages=['toollib','toollib.pair_trading','toollib.Data','toollib.algorithm','toollib.algorithm.MachineLearning','toollib.Download','toollib.Data.TA','toollib.Neat'],
     cmdclass={
             'develop': PostDevelopCommand,
             'install': PostInstallCommand,
