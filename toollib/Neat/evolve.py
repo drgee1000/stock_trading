@@ -6,12 +6,19 @@ from random import *
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import StandardScaler#Scaling
+import toollib.Neat.fitness as f
+import sys
 from collections import Counter
 
 class Neat:
-    def __init__(self):
+    def __init__(self,fitness_index,intervals,arg1,arg2):
         self.inputs = []
         self.outputs = []
+        self.fitness_index = fitness_index
+        self.intervals = intervals
+        self.arg = []
+        self.arg.append(arg1)
+        self.arg.append(arg2)
         self.winner_net = None
 
     def Feature_Scaling(self,data,label):
@@ -40,13 +47,20 @@ class Neat:
 
 
     def run(self,config_file, X_train, X_test, y_train, y_test):
+        fitnessways = ['accuracy', 'badaccgoodacc', 'profit', 'profit_history']
+        eval_fitness = [f.eval_genomes1, f.eval_genomes2, f.eval_genomes3, f.eval_genomes4]
         # Load configuration.
         self.outputs=y_train
         self.inputs=X_train
 
+        print(fitnessways[self.fitness_index] + '_interval' + str(self.intervals) + '_args' + str(self.arg) + '_data20172018')
+
+        outputs = y_train
+
         config = neat.Config(neat.DefaultGenome, neat.DefaultReproduction,
                             neat.DefaultSpeciesSet, neat.DefaultStagnation,
                             config_file)
+
         # Create the population, which is the top-level object for a NEAT run.
         p = neat.Population(config)
 
@@ -56,7 +70,7 @@ class Neat:
         p.add_reporter(stats)
 
         # Run for up to 300 generations.
-        winner = p.run(self.eval_genomes,10)
+        winner = p.run(eval_fitness[self.fitness_index],f.eval_test_all,self.intervals,self.arg,len(outputs),500000)
         print(stats.get_fitness_mean())
         #print(stats.get_fitness_best())
         # Display the winning genome.

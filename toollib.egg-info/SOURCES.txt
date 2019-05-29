@@ -13,10 +13,12 @@ toollib/Data/TA/__init__.py
 toollib/Download/__init__.py
 toollib/Neat/__init__.py
 toollib/Neat/evolve.py
+toollib/Neat/fitness.py
 toollib/Neat/visualize.py
 toollib/algorithm/__init__.py
 toollib/algorithm/buy_and_hold.py
 toollib/algorithm/test.py
+toollib/algorithm/test_neat.py
 toollib/algorithm/MachineLearning/DecisionTree.py
 toollib/algorithm/MachineLearning/LogisticRegression.py
 toollib/algorithm/MachineLearning/RandomForest.py

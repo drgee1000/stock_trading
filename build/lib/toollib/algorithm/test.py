@@ -37,7 +37,11 @@ def initialize(context):
     context.n_components = feature_num
     context.security = symbol(SYMBOL)  # Trade SPY
     set_benchmark(symbol(SYMBOL))  # Set benchmarks
-    context.model = Neat()
+    fitness_index = 3
+    intervals = 50
+    arg1 = 0.7
+    arg2 = 0.8
+    context.model = Neat(fitness_index,intervals,arg1,arg2)
     context.model2 = SVC(kernel='rbf', tol=1e-3, random_state=0, gamma=0.2, C=10.0, verbose=True)  # 8.05 for SVM model
     context.model3 = KNeighborsClassifier(n_neighbors=feature_num, p=3, metric='minkowski')  # 7.05 for  model
     context.model5 = DecisionTreeClassifier(criterion='entropy', max_depth=feature_num, random_state=0)
