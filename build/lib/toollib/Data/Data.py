@@ -1,8 +1,12 @@
-from abc import ABC,abstractmethod
+from abc import abstractmethod
+import abc
 import pandas as pd
 
+# compatible with Python 2 *and* 3:
+ABC = abc.ABCMeta('ABC', (object,), {'__slots__': ()}) 
+
 class Data(ABC):
-    def __init__(self,dates):
+    def __init__(self):
         pass
 
     @abstractmethod

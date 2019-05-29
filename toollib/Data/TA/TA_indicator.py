@@ -8,7 +8,7 @@ class TA(Data):
 
     def __init__(self,dates):
         self.training_window = pd.DataFrame({'timestamp': dates.date})
-        super().__init__(dates)
+        super(Data,self).__init__()
 
     def appendDate(self,dates):
         for i in dates:

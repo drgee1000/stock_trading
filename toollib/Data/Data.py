@@ -6,7 +6,7 @@ import pandas as pd
 ABC = abc.ABCMeta('ABC', (object,), {'__slots__': ()}) 
 
 class Data(ABC):
-    def __init__(self,dates):
+    def __init__(self):
         pass
 
     @abstractmethod
