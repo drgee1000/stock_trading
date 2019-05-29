@@ -16,5 +16,5 @@ def create_config():
     path = os.path.expanduser(zipline.utils.paths.zipline_root())
     if not os.path.isdir(path):
         os.mkdir(path)
-    shutil.copyfile('data/currency/extension.py', path)
+    shutil.copyfile('data/stocks/extension.py', path+'/extension.py')
     subprocess.call(["zipline", "ingest", "-b", "custom-currency-csvdir-bundle"])
