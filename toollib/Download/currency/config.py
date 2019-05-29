@@ -1,6 +1,7 @@
 import subprocess
 import shutil
 import os
+import zipline
 def create_config():
     cwd = os.getcwd()
     with open(cwd+"/data/currency/extension.py","r") as f:
@@ -12,6 +13,6 @@ def create_config():
         for line in lines:
             f1.write(line)
         f1.truncate()
-    path = os.path.expanduser('~/.zipline/extension.py')
+    path = os.path.expanduser(zipline.utils.paths.default_extension())
     shutil.copyfile('data/currency/extension.py', path)
     subprocess.call(["zipline", "ingest", "-b", "custom-currency-csvdir-bundle"])

@@ -1,5 +1,5 @@
 import urllib
-import urllib.request
+#import urllib.request
 import os
 import csv
 import progressbar
