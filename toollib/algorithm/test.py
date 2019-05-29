@@ -71,6 +71,7 @@ def create_model(context, data):
     recent_high = data.history(context.security, 'high', context.history_range, '1d').values
     recent_low = data.history(context.security, 'low', context.history_range, '1d').values
     recent_dates = data.history(context.security, 'price', context.lookback + 1, '1d').index
+    print(recent_dates)
     input_, target_ = getTrainingWindow(recent_high,recent_low,recent_prices, recent_volume,recent_dates)
     y = np.delete(target_, 0, 1)
     y = np.ravel(y)
