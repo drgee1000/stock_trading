@@ -6,7 +6,7 @@ from random import *
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import StandardScaler#Scaling
-import toollib.Neat.fitness as f
+from toollib.Neat.fitness import Fitness
 import sys
 from collections import Counter
 
@@ -47,15 +47,18 @@ class Neat:
 
 
     def run(self,config_file, X_train, X_test, y_train, y_test):
-        fitnessways = ['accuracy', 'badaccgoodacc', 'profit', 'profit_history']
-        eval_fitness = [f.eval_genomes1, f.eval_genomes2, f.eval_genomes3, f.eval_genomes4]
         # Load configuration.
         self.outputs=y_train
         self.inputs=X_train
 
-        print(fitnessways[self.fitness_index] + '_interval' + str(self.intervals) + '_args' + str(self.arg) + '_data20172018')
-
         outputs = y_train
+        inputs = X_train
+        f = Fitness(inputs, outputs,self.intervals,self.arg,len(outputs))
+
+        fitnessways = ['accuracy', 'badaccgoodacc', 'profit', 'profit_history']
+        eval_fitness = [f.eval_genomes1, f.eval_genomes2, f.eval_genomes3, f.eval_genomes4]
+        print(fitnessways[self.fitness_index] + '_interval' + str(self.intervals) + '_args' + str(
+            self.arg) + '_data20172018')
 
         config = neat.Config(neat.DefaultGenome, neat.DefaultReproduction,
                             neat.DefaultSpeciesSet, neat.DefaultStagnation,
@@ -70,26 +73,11 @@ class Neat:
         p.add_reporter(stats)
 
         # Run for up to 300 generations.
-        winner = p.run(eval_fitness[self.fitness_index],f.eval_test_all,self.intervals,self.arg,len(outputs),500000)
-        print(stats.get_fitness_mean())
-        #print(stats.get_fitness_best())
-        # Display the winning genome.
-        #print('\nBest genome:\n{!s}'.format(winner))
-
-        # Show output of the most fit genome against training data.
-        #print('\nOutput:')
-        test_inputs = []
-        test_outputs = y_test
-        test_inputs=X_test
+        winner = p.run(eval_fitness[self.fitness_index],n = 100)
         self.winner_net = neat.nn.FeedForwardNetwork.create(winner, config)
-        accuracy = 0
-        for i,o in zip(test_inputs,test_outputs):
-            output = self.winner_net.activate(i)
-            aux = np.argmax(output)
-            if(aux == np.argmax(o)): accuracy+=1
-            #print("input {!r}, expected output {!r}, got {!r}, {!r}".format(i, o, aux,output))
-        accuracy = accuracy/len(test_inputs)
-        print('Final accuracy {!r}'.format(accuracy))
+        f.eval_test_all(self.winner_net, 0, self.intervals, config, X_test, y_test)
+        #print(stats.get_fitness_mean())
+
 
     def predict(self,X_test):
         output_ = []

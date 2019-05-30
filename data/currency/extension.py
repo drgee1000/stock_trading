@@ -9,7 +9,7 @@ register(
     'custom-currency-csvdir-bundle',
     csvdir_equities(
         ['minute'],
-	'/home/sustechcs/test/Backtest_MachineLearning/csv/currency',
+	'/home/sustechcs/proj/stock_trading/csv/currency',
     ),
 	calendar_name='24/7', #AlwaysOpenCalendar
 

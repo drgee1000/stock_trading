@@ -26,6 +26,7 @@ MODEL_NAME = ''
 SYMBOL = ''
 stocks_bundle = 'custom-stocks-csvdir-bundle'
 currency_bundle = 'custom-currency-csvdir-bundle'
+
 def initialize(context):
     """
     Called once at the start of the algorithm.
@@ -37,8 +38,8 @@ def initialize(context):
     context.n_components = feature_num
     context.security = symbol(SYMBOL)  # Trade SPY
     set_benchmark(symbol(SYMBOL))  # Set benchmarks
-    fitness_index = 3
-    intervals = 50
+    fitness_index = 0
+    intervals = 20
     arg1 = 0.7
     arg2 = 0.8
     context.model = Neat(fitness_index,intervals,arg1,arg2)
@@ -75,7 +76,7 @@ def create_model(context, data):
     recent_high = data.history(context.security, 'high', context.history_range, '1d').values
     recent_low = data.history(context.security, 'low', context.history_range, '1d').values
     recent_dates = data.history(context.security, 'price', context.lookback + 1, '1d').index
-    print(recent_dates)
+    #print(recent_dates)
     input_, target_ = getTrainingWindow(recent_high,recent_low,recent_prices, recent_volume,recent_dates)
     y = np.delete(target_, 0, 1)
     y = np.ravel(y)
@@ -229,7 +230,7 @@ try:
             continue
         else:
             print('output/' + SYMBOL + '_NEAT_output.csv is not exist')
-        perf_manual = run_algorithm(start = start, end = end, capital_base = 10000000.0,  initialize=initialize, handle_data=rebalance, bundle = 'quantopian-quandl')
+        perf_manual = run_algorithm(start = start, end = end, capital_base = 10000000.0,  initialize=initialize, handle_data=rebalance, bundle = stocks_bundle)
 
         # Print
         perf_manual.to_csv('output/'+SYMBOL+'_NEAT_output.csv')
