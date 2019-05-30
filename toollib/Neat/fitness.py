@@ -17,7 +17,7 @@ class Fitness:
     def eval_genomes1(self,genomes,config):
         #print('The data index is %d',data_idx)
 
-        if((self.data_idx + self.intervals) <= self.size):
+        if((self.data_idx + self.intervals) < self.size):
             eval_input = self.inputs[self.data_idx:self.data_idx + self.intervals]
             eval_output = self.outputs[self.data_idx:self.data_idx + self.intervals]
             self.data_idx = self.data_idx + self.intervals
@@ -44,7 +44,7 @@ class Fitness:
     def eval_genomes2(self,genomes,config):
         #print('The data index is %d',data_idx)
 
-        if((self.data_idx + self.intervals) <= self.size):
+        if((self.data_idx + self.intervals) < self.size):
             eval_input = self.inputs[self.data_idx:self.data_idx + self.intervals]
             eval_output = self.outputs[self.data_idx:self.data_idx + self.intervals]
             self.data_idx = self.data_idx + self.intervals
@@ -71,7 +71,7 @@ class Fitness:
     def eval_genomes3(self,genomes,config):
         #print('The data index is %d',data_idx)
 
-        if((self.data_idx + self.intervals) <= self.size):
+        if((self.data_idx + self.intervals) < self.size):
             eval_input = self.inputs[self.data_idx:self.data_idx + self.intervals]
             eval_output = self.outputs[self.data_idx:self.data_idx + self.intervals]
             self.data_idx = self.data_idx + self.intervals
@@ -114,7 +114,7 @@ class Fitness:
     def eval_genomes4(self,genomes,config):
         #print('The data index is %d',data_idx)
 
-        if((self.data_idx + self.intervals) <= self.size):
+        if((self.data_idx + self.intervals) < self.size):
             eval_input = self.inputs[self.data_idx:self.data_idx + self.intervals]
             eval_output = self.outputs[self.data_idx:self.data_idx + self.intervals]
             self.data_idx = self.data_idx + self.intervals

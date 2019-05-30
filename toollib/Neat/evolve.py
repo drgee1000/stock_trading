@@ -73,7 +73,7 @@ class Neat:
         p.add_reporter(stats)
 
         # Run for up to 300 generations.
-        winner = p.run(eval_fitness[self.fitness_index],n = 100)
+        winner = p.run(eval_fitness[self.fitness_index],n = 300)
         self.winner_net = neat.nn.FeedForwardNetwork.create(winner, config)
         f.eval_test_all(self.winner_net, 0, self.intervals, config, X_test, y_test)
         #print(stats.get_fitness_mean())
