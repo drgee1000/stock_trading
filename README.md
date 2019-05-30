@@ -17,5 +17,8 @@ the project is base on Zipline backtest platform, see the Zipline: http://www.zi
 `python setup.py install`
 
 
-### Step 3: Run Backtest  ###
+### Step 3: Run Backtest by Machine Learning algorithm  ###
 `python toollib/algorithm/test.py`
+
+### or Step 3: Run Backtest by NEAT algorithm  ###
+`python toollib/algorithm/test_neat.py`

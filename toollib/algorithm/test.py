@@ -234,4 +234,4 @@ try:
             # Print
             perf_manual.to_csv('output/'+SYMBOL+'_'+MODEL_NAME+'_output.csv')
 except Exception as error:
-pass
+    pass
