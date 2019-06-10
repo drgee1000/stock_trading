@@ -77,7 +77,30 @@ class Neat:
         self.winner_net = neat.nn.FeedForwardNetwork.create(winner, config)
         f.eval_test_all(self.winner_net, 0, self.intervals, config, X_test, y_test)
         #print(stats.get_fitness_mean())
+        return p
 
+    def run_online_population(self,config_file, X_train, X_test, y_train, y_test, p):
+        # Load configuration.
+        self.outputs=y_train
+        self.inputs=X_train
+
+        outputs = y_train
+        inputs = X_train
+        f = Fitness(inputs, outputs,self.intervals,self.arg,len(outputs))
+        config = neat.Config(neat.DefaultGenome, neat.DefaultReproduction,
+                             neat.DefaultSpeciesSet, neat.DefaultStagnation,
+                             config_file)
+        fitnessways = ['accuracy', 'badaccgoodacc', 'profit', 'profit_history']
+        eval_fitness = [f.eval_genomes1, f.eval_genomes2, f.eval_genomes3, f.eval_genomes4]
+        print(fitnessways[self.fitness_index] + '_interval' + str(self.intervals) + '_args' + str(
+            self.arg) + '_data20172018')
+
+        # Run for up to 300 generations.
+        winner = p.run(eval_fitness[self.fitness_index],n = 300)
+        self.winner_net = neat.nn.FeedForwardNetwork.create(winner, config)
+        f.eval_test_all(self.winner_net, 0, self.intervals, config, X_test, y_test)
+        #print(stats.get_fitness_mean())
+        return p
 
     def predict(self,X_test):
         output_ = []

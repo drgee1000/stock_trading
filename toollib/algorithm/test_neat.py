@@ -32,6 +32,8 @@ def initialize(context):
     Called once at the start of the algorithm.
     """
     feature_num = 11
+    context.model_created = False
+    context.p = None
     context.orders_submitted = False
     large_num = 9999999
     least_num = 0
@@ -89,7 +91,11 @@ def create_model(context, data):
     X_train, X_test, y_train, y_test = train_test_split(X_new, y, test_size=0.3, random_state=0)
     print(X_train.shape)
     config_path = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', 'Neat/config'))
-    model.run(config_path, X_train, X_test, y_train, y_test)
+    if not(context.model_created):
+        context.p = model.run(config_path, X_train, X_test, y_train, y_test)
+        context.model_created = True
+    else:
+        context.p = model.run_online_population(config_path,X_train, X_test, y_train, y_test,context.p)
    # model.fit(X_train, y_train)
 
 
