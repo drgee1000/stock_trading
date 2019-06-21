@@ -20,31 +20,34 @@ from sklearn.metrics import accuracy_score
 from sklearn.feature_selection import SelectKBest
 from sklearn.feature_selection import chi2
 from toollib.Data.TA.TA_indicator import TA
-from toollib.Data.info import Info
+from toollib.LSTM.lstm import LSTM
 
+MODEL_NAME = ''
 SYMBOL = ''
-SnPList = Info(pathname='data/constituents.csv').get_symbol_list()
-
-
 stocks_bundle = 'custom-stocks-csvdir-bundle'
 currency_bundle = 'custom-currency-csvdir-bundle'
-
-start = pd.to_datetime('2009-01-01').tz_localize('US/Eastern')
-end = pd.to_datetime('2018-12-01').tz_localize('US/Eastern')
-
 
 def initialize(context):
     """
     Called once at the start of the algorithm.
     """
     feature_num = 11
+    context.model_created = False
+    context.p = None
     context.orders_submitted = False
     large_num = 9999999
     least_num = 0
     context.n_components = feature_num
     context.security = symbol(SYMBOL)  # Trade SPY
     set_benchmark(symbol(SYMBOL))  # Set benchmarks
-    context.model = RandomForestClassifier(criterion='entropy', n_estimators=feature_num, random_state=1, n_jobs=2)  # 5.2 for randomforest
+    context.model = None
+    context.model2 = SVC(kernel='rbf', tol=1e-3, random_state=0, gamma=0.2, C=10.0, verbose=True)  # 8.05 for SVM model
+    context.model3 = KNeighborsClassifier(n_neighbors=feature_num, p=3, metric='minkowski')  # 7.05 for  model
+    context.model5 = DecisionTreeClassifier(criterion='entropy', max_depth=feature_num, random_state=0)
+    context.model4 = RandomForestClassifier(criterion='entropy', n_estimators=feature_num, random_state=1,
+                                            n_jobs=2)  # 5.2 for randomforest
+    context.model1 = LogisticRegression(random_state=0, solver='lbfgs', multi_class='multinomial')
+    context.modellist = {'SVM':context.model2,'KNeighbors':context.model3,'DecisionTree':context.model,'RandomForest':context.model4,'LogisticRegression':context.model1}
     context.lookback = 350  # Look back 62 days
     context.history_range = 350  # Only consider the past 400 days' history
     context.threshold = 4.05
@@ -59,30 +62,45 @@ def initialize(context):
     """
 
     # Trade at the start of every day
-    schedule_function(rebalance, date_rules.every_day(), time_rules.market_open(minutes=1))
+    #schedule_function(rebalance, date_rules.every_day(), time_rules.market_open(minutes=1))
 
 def handle_data(context, data):
     pass
 def create_model(context, data):
     # Get the relevant daily prices
+
+    model = context.model
     recent_prices = data.history(context.security, 'price', context.history_range, '1d').values
     recent_volume = data.history(context.security, 'volume', context.history_range, '1d').values
     recent_high = data.history(context.security, 'high', context.history_range, '1d').values
     recent_low = data.history(context.security, 'low', context.history_range, '1d').values
     recent_dates = data.history(context.security, 'price', context.lookback + 1, '1d').index
+    print("test")
     input_, target_ = getTrainingWindow(recent_high,recent_low,recent_prices, recent_volume,recent_dates)
     y = np.delete(target_, 0, 1)
     y = np.ravel(y)
-    X_train, X_test, y_train, y_test = train_test_split(input_, y, test_size=0.3, random_state=0)
-    X_normalized_ = preprocessing.normalize(X_train, norm='l2')
+    X_normalized_ = preprocessing.normalize(input_, norm='l2')
     sc = preprocessing.MinMaxScaler()
     sc.fit(X_normalized_)
     X_std = sc.transform(X_normalized_)
     # feature selection to input features (context.n_components)
-    X_new = SelectKBest(chi2, k=context.n_components).fit_transform(X_std, y_train)
-    X_train = X_new
-    context.model.fit(X_train, y_train)
+    X_new = SelectKBest(chi2, k=context.n_components).fit_transform(X_std, y)
+    X_train, X_test, y_train, y_test = train_test_split(X_new, y, test_size=0.3, random_state=0)
+    print(X_train.shape)
+    if model is None:
+        #context.model = LSTM(batch_size=X_train.shape[0], num_steps=X_train.shape[1])
+        model = context.model
+    model.train(X_train,y_train)
+   # model.fit(X_train, y_train)
 
+
+def getSector(length, sector):
+    date = 1
+    Sector_ = []
+    for i in range(length):
+        Sector_.append([date, sector])
+        date = date + 1
+    return Sector_
 
 def mergeMatrice(Matrix_A, Matrix_B):
     return np.concatenate((np.delete(Matrix_A, 0, 1), np.delete(Matrix_B, 0, 1)), axis=1)
@@ -158,6 +176,7 @@ def rebalance(context, data):
     Execute orders according to our schedule_function() timing.
     """
     # Get recent prices
+    model = context.model
     recent_prices = data.history(context.security, 'price', context.history_range, '1d').values
     recent_volume = data.history(context.security, 'volume', context.history_range, '1d').values
     recent_high = data.history(context.security, 'high', context.history_range, '1d').values
@@ -182,12 +201,12 @@ def rebalance(context, data):
         print('Initial orders submitted')
         context.orders_submitted = True
     try:
-        if context.model:  # Check if our model is generated
+        if model:  # Check if our model is generated
             # Predict using our model and the recent prices
             X_test_ = X_test.reshape(1, -1)
-            prediction = context.model.predict(X_test_)
-            prediction_accuracy = context.model.predict(X_new[-10:, :])  # predict in past 10 days
-            accuracy = accuracy_score(np.ravel(np.delete(_, 0, 1))[-10:], prediction_accuracy)
+            prediction = model.predict(X_test_)
+            prediction_accuracy = model.predict(X_new[-10:, :])  # predict in past 10 days
+            accuracy = accuracy_score(np.ravel(np.delete(_, 0, 1))[-10:], np.array(prediction_accuracy).round())
             print('Accuracy: %.2f' % accuracy)
             record(accuracy=accuracy)
             # print(prediction," x_test: ",X_test)
@@ -198,24 +217,26 @@ def rebalance(context, data):
         print('Caught this error: ' + repr(error))
 
 
-# Create algorithm object passing in initialize and
-# handle_data functions
-#['BAC', 'GNW', 'IPG', 'HOG', 'JPM', 'HCN', 'KSS', 'MDLZ']
-#['BAC', 'INTC', 'SPLS', 'PFE', 'HPQ', 'JPM', 'IPG', 'TROW']
-try:
-    for ele in SnPList:
-        SYMBOL = ele
-        if(os.path.isfile(('output/'+SYMBOL+'_RandomForest_output.csv'))):
-            print('output/'+SYMBOL+'_RandomForest_output.csv is exist')
-            continue
-        else:
-            print('output/' + SYMBOL + '_RandomForest_output.csv is not exist')
+test_string = ['SPY']
 
-        perf_manual = run_algorithm(start = start, end = end, capital_base = 10000000.0,  initialize=initialize, handle_data=rebalance, bundle = stocks_bundle)
+start = pd.to_datetime('2009-01-01').tz_localize('US/Eastern')
+end = pd.to_datetime('2018-12-01').tz_localize('US/Eastern')
 
-        # Print
-        perf_manual.to_csv('output/'+SYMBOL+'_RandomForest_output.csv')
 
-except Exception as error:
-    pass
+
+for ele in test_string:
+    SYMBOL = ele
+    if(os.path.isfile(('output/'+SYMBOL+'_LSTM_output.csv'))):
+        print('output/'+SYMBOL+'_LSTM_output.csv is exist')
+        continue
+    else:
+        print('output/' + SYMBOL + '_LSTM_output.csv is not exist')
+    perf_manual = run_algorithm(start = start, end = end, capital_base = 10000000.0,  initialize=initialize, handle_data=rebalance, bundle = stocks_bundle)
+
+    # Print
+    perf_manual.to_csv('output/'+SYMBOL+'_LSTM_output.csv')
+
+
+
+
 

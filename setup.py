@@ -66,7 +66,7 @@ setup(
     author='Xianfan Gu',
     author_email='xianfang@asu.edu',
     # Needed to actually package something
-    packages=['toollib','toollib.pair_trading','toollib.Data','toollib.algorithm','toollib.algorithm.MachineLearning','toollib.Download','toollib.Data.TA','toollib.Neat'],
+    packages=['toollib','toollib.pair_trading','toollib.Data','toollib.algorithm','toollib.algorithm.MachineLearning','toollib.Download','toollib.Data.TA','toollib.Neat','toollib.LSTM'],
     cmdclass={
             'develop': PostDevelopCommand,
             'install': PostInstallCommand,
