@@ -34,6 +34,7 @@ register(
 )
 
 ```
+Note that the parameter ['daily'] is recognised in zipline to be daily data (for minute data this parameter can be changed to ['minute']
 To finally ingest our data, we can run: `zipline ingest -b custom-csvdir-bundle`
 
 More details about data bundles in Zipline: http://www.zipline.io/bundles.html#ingesting-data-from-csv-files
