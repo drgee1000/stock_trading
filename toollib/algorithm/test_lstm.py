@@ -75,7 +75,7 @@ def create_model(context, data):
     recent_high = data.history(context.security, 'high', context.history_range, '1d').values
     recent_low = data.history(context.security, 'low', context.history_range, '1d').values
     recent_dates = data.history(context.security, 'price', context.lookback + 1, '1d').index
-    print("test")
+
     input_, target_ = getTrainingWindow(recent_high,recent_low,recent_prices, recent_volume,recent_dates)
     y = np.delete(target_, 0, 1)
     y = np.ravel(y)
@@ -88,7 +88,7 @@ def create_model(context, data):
     X_train, X_test, y_train, y_test = train_test_split(X_new, y, test_size=0.3, random_state=0)
     print(X_train.shape)
     if model is None:
-        #context.model = LSTM(batch_size=X_train.shape[0], num_steps=X_train.shape[1])
+        context.model = LSTM(batch_size=X_train.shape[0], num_steps=X_train.shape[1])
         model = context.model
     model.train(X_train,y_train)
    # model.fit(X_train, y_train)
@@ -219,7 +219,7 @@ def rebalance(context, data):
 
 test_string = ['SPY']
 
-start = pd.to_datetime('2009-01-01').tz_localize('US/Eastern')
+start = pd.to_datetime('2016-01-01').tz_localize('US/Eastern')
 end = pd.to_datetime('2018-12-01').tz_localize('US/Eastern')
 
 

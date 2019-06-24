@@ -224,8 +224,8 @@ def rebalance(context, data):
 
 test_string = ['SPY']
 
-start = pd.to_datetime('2009-01-01').tz_localize('US/Eastern')
-end = pd.to_datetime('2018-12-01').tz_localize('US/Eastern')
+start = pd.to_datetime('2016-01-01').tz_localize('US/Eastern')
+end = pd.to_datetime('2017-12-01').tz_localize('US/Eastern')
 
 
 try:
