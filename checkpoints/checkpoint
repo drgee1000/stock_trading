@@ -1,0 +1,2 @@
+model_checkpoint_path: "i20_l512.ckpt"
+all_model_checkpoint_paths: "i20_l512.ckpt"

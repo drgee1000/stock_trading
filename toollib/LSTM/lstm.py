@@ -80,7 +80,7 @@ def build_inputs(batch_size, num_steps):
     '''
     # Declare placeholders we'll feed into the graph
     inputs = tf.placeholder(tf.float32, [batch_size, num_steps], name='inputs')
-    targets = tf.placeholder(tf.int32, [batch_size, None], name='targets')
+    targets = tf.placeholder(tf.int32, [batch_size, ], name='targets')
 
     # Keep probability placeholder for drop out layers
     keep_prob = tf.placeholder(tf.float32, name='keep_prob')
@@ -162,11 +162,10 @@ def build_loss(logits, targets, lstm_size, num_classes):
     '''
 
     # One-hot encode targets and reshape to match logits, one row per batch_size per step
-    y_one_hot = tf.one_hot(targets, num_classes)
-    y_reshaped = tf.reshape(y_one_hot, logits.get_shape())
+    #y_reshaped = tf.reshape(targets, logits.get_shape())
 
     # Softmax cross entropy loss
-    loss = tf.nn.softmax_cross_entropy_with_logits(logits=logits, labels=y_reshaped)
+    loss = tf.nn.softmax_cross_entropy_with_logits(logits=logits, labels=logits)
     loss = tf.reduce_mean(loss)
     return loss
 
