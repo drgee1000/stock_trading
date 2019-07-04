@@ -23,7 +23,7 @@ from toollib.Data.TA.TA_indicator import TA
 
 MODEL_NAME = ''
 SYMBOL = ''
-stocks_bundle = 'quantopian-quandl'
+stocks_bundle = 'custom-stocks-csvdir-bundle'
 currency_bundle = 'custom-currency-csvdir-bundle'
 def initialize(context):
     """
@@ -205,7 +205,7 @@ def rebalance(context, data):
     except Exception as error:
         print('Caught this error: ' + repr(error))
 
-
+"""
 test_string = ['AAPL', 'ABT', 'ACN', 'ADBE', 'AAP', 'AET', 'AMG', 'ARE', 'AKAM', 'AGN', 'ADS', 'MO', 'AEE', 'AEP', 'AIG',
                    'AMP', 'AME', 'APH', 'ADI', 'APA', 'AMAT', 'AIZ', 'ADSK', 'AZO', 'AVB', 'BLL', 'BK', 'BAX', 'BDX', 'BRK.B',
                    'HRB', 'BWA', 'BSX', 'CHRW', 'COG', 'CPB', 'CAH', 'KMX', 'CAT', 'CBS', 'CNP', 'CERN', 'SCHW', 'CVX', 'CB', 'XEC',
@@ -231,10 +231,10 @@ test_string = ['AAPL', 'ABT', 'ACN', 'ADBE', 'AAP', 'AET', 'AMG', 'ARE', 'AKAM',
                     'AMT', 'AON', 'CBG', 'CSCO', 'CVS', 'EL', 'F', 'HRL', 'IP', 'MCD', 'MNST', 'NVDA', 'PSA', 'REGN', 'SJM', 'TGT', 'ANTM', 'XL',
                     'ADP', 'CHK', 'JBHT','CL', 'ECL', 'L','LB','WHR'
                    ]
-
-
-start = pd.to_datetime('2016-01-04').tz_localize('US/Eastern')
-end = pd.to_datetime('2017-12-29').tz_localize('US/Eastern')
+"""
+test_string = ['JPXN','EWH']
+start = pd.to_datetime('2015-01-01').tz_localize('US/Eastern')
+end = pd.to_datetime('2018-12-01').tz_localize('US/Eastern')
 # Create algorithm object passing in initialize and
 # handle_data functions
 #['BAC', 'GNW', 'IPG', 'HOG', 'JPM', 'HCN', 'KSS', 'MDLZ']

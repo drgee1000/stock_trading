@@ -88,9 +88,11 @@ def create_model(context, data):
     X_train, X_test, y_train, y_test = train_test_split(X_new, y, test_size=0.3, random_state=0)
     print(X_train.shape)
     if model is None:
-        context.model = LSTM(batch_size=X_train.shape[0], num_steps=X_train.shape[1])
-        model = context.model
-    model.train(X_train,y_train)
+        print("create model")
+        model = LSTM(batch_size=X_train.shape[0], num_steps=X_train.shape[1])
+        context.model = model
+    else:
+        context.model.train(X_train,y_train)
    # model.fit(X_train, y_train)
 
 
@@ -185,14 +187,14 @@ def rebalance(context, data):
     input_, _ = getTrainingWindow(recent_high, recent_low, recent_prices, recent_volume,recent_dates)
     y = np.delete(_, 0, 1)
     y = np.ravel(y)
-    X_train, X_test, y_train, y_test = train_test_split(input_, y, test_size=0.3, random_state=0)
-    X_normalized_ = preprocessing.normalize(X_test, norm='l2')
+    X_normalized_ = preprocessing.normalize(input_, norm='l2')
     sc = preprocessing.MinMaxScaler()
     sc.fit(X_normalized_)
     X_std = sc.transform(X_normalized_)
     # feature selection to input features (context.n_components)
-    X_new = SelectKBest(chi2, k=context.n_components).fit_transform(X_std, y_test)
-    X_test = X_new[-1, :]
+    X_new = SelectKBest(chi2, k=context.n_components).fit_transform(X_std, y)
+    X_train, X_test, y_train, y_test = train_test_split(X_new, y, test_size=0.7, random_state=0)
+    X_test_decision = X_new[-1, :]
 
     for stock in context.portfolio.positions:
         print(context.portfolio.positions[stock].amount)
@@ -203,10 +205,11 @@ def rebalance(context, data):
     try:
         if model:  # Check if our model is generated
             # Predict using our model and the recent prices
-            X_test_ = X_test.reshape(1, -1)
-            prediction = model.predict(X_test_)
-            prediction_accuracy = model.predict(X_new[-10:, :])  # predict in past 10 days
-            accuracy = accuracy_score(np.ravel(np.delete(_, 0, 1))[-10:], np.array(prediction_accuracy).round())
+            #X_test_ = X_test.reshape(1, -1)
+            prediction = model.predict(X_test)
+            print(prediction)
+            prediction_accuracy = model.predict(X_test)  # predict in past 10 days
+            accuracy = accuracy_score(y_test, np.array(prediction_accuracy).round())
             print('Accuracy: %.2f' % accuracy)
             record(accuracy=accuracy)
             # print(prediction," x_test: ",X_test)
@@ -214,7 +217,7 @@ def rebalance(context, data):
             decision_order = prediction[0]
             order_target_percent(context.security, decision_order)
     except Exception as error:
-        print('Caught this error: ' + repr(error))
+        print(error)
 
 
 test_string = ['SPY']

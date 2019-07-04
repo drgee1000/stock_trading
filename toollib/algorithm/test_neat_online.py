@@ -32,6 +32,7 @@ def initialize(context):
     Called once at the start of the algorithm.
     """
     feature_num = 11
+    context.model_created = False
     context.p = None
     context.orders_submitted = False
     large_num = 9999999
@@ -90,7 +91,11 @@ def create_model(context, data):
     X_train, X_test, y_train, y_test = train_test_split(X_new, y, test_size=0.3, random_state=0)
     print(X_train.shape)
     config_path = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', 'Neat/config'))
-    context.p = model.run(config_path, X_train, X_test, y_train, y_test)
+    if not(context.model_created):
+        context.p = model.run(config_path, X_train, X_test, y_train, y_test)
+        context.model_created = True
+    else:
+        context.p = model.run_online_population(config_path,X_train, X_test, y_train, y_test,context.p)
    # model.fit(X_train, y_train)
 
 
@@ -226,15 +231,15 @@ end = pd.to_datetime('2018-12-01').tz_localize('US/Eastern')
 try:
     for ele in test_string:
         SYMBOL = ele
-        if(os.path.isfile(('output/'+SYMBOL+'_NEAT_output.csv'))):
-            print('output/'+SYMBOL+'_NEAT_output.csv is exist')
+        if(os.path.isfile(('output/'+SYMBOL+'_NEAT_online_output.csv'))):
+            print('output/'+SYMBOL+'_NEAT_online_output.csv is exist')
             continue
         else:
-            print('output/' + SYMBOL + '_NEAT_output.csv is not exist')
+            print('output/' + SYMBOL + '_NEAT_online_output.csv is not exist')
         perf_manual = run_algorithm(start = start, end = end, capital_base = 10000000.0,  initialize=initialize, handle_data=rebalance, bundle = stocks_bundle)
 
         # Print
-        perf_manual.to_csv('output/'+SYMBOL+'_NEAT_output.csv')
+        perf_manual.to_csv('output/'+SYMBOL+'_NEAT_online_output.csv')
 except Exception as error:
     print(error)
 

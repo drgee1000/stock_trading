@@ -9,7 +9,7 @@ register(
     'custom-stocks-csvdir-bundle',
     csvdir_equities(
         ['daily'],
-	'/home/sustechcs/proj/stock_trading/csv/stocks',
+	'/home/sustechcs/proj2/stock_trading/csv/stocks',
     ),
     calendar_name='NYSE',  # US equities
 
