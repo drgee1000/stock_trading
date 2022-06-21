@@ -4,4 +4,4 @@ zipline
 sklearn
 progressbar
 pandas==0.22
-numpy==1.16.2
+numpy==1.22.0
